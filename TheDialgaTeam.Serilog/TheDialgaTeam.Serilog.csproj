@@ -23,6 +23,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>serilog</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageLicenseUrl>https://github.com/TheDialgaTeam/TheDialgaTeam.Serilog/blob/master/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
