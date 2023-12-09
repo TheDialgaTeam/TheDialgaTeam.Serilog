@@ -43,7 +43,8 @@ jobs:
       - name: Build project
         run: |
           $output = Join-Path "${{ github.workspace }}" "${{ env.PROJECT_PUBLISH_ROOT }}"
-          dotnet pack -c Release -o "${output}"
+          dotnet publish -c Release -o "${output}" "${{ env.PROJECT_CSPROJ_FILE }}"
+          dotnet pack -c Release -o "${output}" "${{ env.PROJECT_CSPROJ_FILE }}"
 
       - name: Publish project
         run: |
