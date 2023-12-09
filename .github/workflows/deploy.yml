@@ -1,0 +1,51 @@
+name: Deploy To NuGet Registry
+
+on:
+  push:
+    tags:
+      - "*"
+
+env:
+  PROJECT_CSPROJ_FILE: TheDialgaTeam.Serilog/TheDialgaTeam.Serilog.csproj
+  PROJECT_PUBLISH_ROOT: publish
+  DOTNET_VERSION: "8.0.x"
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build:
+    name: Build and Deploy library
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "${{ env.DOTNET_VERSION }}"
+
+      - name: Setup NuGet Credentials
+        run: |
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name "github/${{ github.repository_owner }}" --username "${{ github.actor }}" --password "${{ github.token }}" --store-password-in-clear-text
+
+      - name: Patch csproj
+        run: |
+          $version = "${{ github.ref }}" -split "/" | Select-Object -Last 1
+          $csproj_file = Join-Path "${{ github.workspace }}" "${{ env.PROJECT_CSPROJ_FILE }}"
+          ((Get-Content "$csproj_file") -replace '^(\s*)<Version>.+?<\/Version>(\s*)$', "`$1<Version>${version}</Version>`$2") | Set-Content "${csproj_file}"
+
+      - name: Build project
+        run: |
+          $output = Join-Path "${{ github.workspace }}" "${{ env.PROJECT_PUBLISH_ROOT }}"
+          dotnet pack -c Release -o "${output}"
+
+      - name: Publish project
+        run: |
+          $output = Join-Path "${{ github.workspace }}" "${{ env.PROJECT_PUBLISH_ROOT }}" "*.nupkg"
+          dotnet nuget push "${output}" --api-key "${{ github.token }}" --source "github/${{ github.repository_owner }}"
