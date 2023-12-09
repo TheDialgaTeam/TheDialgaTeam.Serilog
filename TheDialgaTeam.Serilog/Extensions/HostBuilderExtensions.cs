@@ -38,7 +38,7 @@ public static class HostBuilderExtensions
         return hostBuilder.ConfigureServices(static collection =>
         {
             collection.AddOptions<LogLevelOptions>().BindConfiguration("TheDialgaTeam.Serilog:LogLevel");
-            collection.AddOptions<LogLevelMessageTemplateOptions>().BindConfiguration("TheDialgaTeam.Serilog:TemplateTextFormatter");
+            collection.AddOptions<LogLevelMessageTemplateOptions>().BindConfiguration("TheDialgaTeam.Serilog:LogLevelMessageTemplate");
             collection.TryAddSingleton<AnsiMessageTemplateTextFormatterOptions>();
             collection.TryAddSingleton<ActionSinkOptions>();
             collection.TryAddSingleton<SerilogLoggerSettings>();
