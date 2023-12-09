@@ -1,6 +1,6 @@
 <div id="top"></div>
 
-[![Deploy To NuGet Registry](https://github.com/TheDialgaTeam/TheDialgaTeam.Microsoft.Extensions.Logging/actions/workflows/deploy.yml/badge.svg)](https://github.com/TheDialgaTeam/TheDialgaTeam.Microsoft.Extensions.Logging/actions/workflows/deploy.yml)
+[![Deploy To NuGet Registry](https://github.com/TheDialgaTeam/TheDialgaTeam.Serilog/actions/workflows/deploy.yml/badge.svg)](https://github.com/TheDialgaTeam/TheDialgaTeam.Serilog/actions/workflows/deploy.yml)
 
 # TheDialgaTeam.Serilog
 
