@@ -7,6 +7,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <IsTrimmable>true</IsTrimmable>
 
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
         <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
 
@@ -22,8 +23,6 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
         <PackageTags>serilog</PackageTags>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageLicenseUrl>https://github.com/TheDialgaTeam/TheDialgaTeam.Serilog/blob/master/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
