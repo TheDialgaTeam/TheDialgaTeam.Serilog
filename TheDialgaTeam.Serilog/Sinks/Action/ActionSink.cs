@@ -26,30 +26,21 @@ using Serilog.Formatting;
 
 namespace TheDialgaTeam.Serilog.Sinks.Action;
 
-public sealed class ActionSink : ILogEventSink
+public sealed class ActionSink(ITextFormatter textFormatter, ActionSinkOptions actionSinkOptions) : ILogEventSink
 {
     [ThreadStatic]
     private static StringWriter? t_stringWriter;
-
-    private readonly ITextFormatter _textFormatter;
-    private readonly ActionSinkOptions _actionSinkOptions;
-
-    public ActionSink(ITextFormatter textFormatter, ActionSinkOptions actionSinkOptions)
-    {
-        _textFormatter = textFormatter;
-        _actionSinkOptions = actionSinkOptions;
-    }
 
     public void Emit(LogEvent logEvent)
     {
         t_stringWriter ??= new StringWriter();
 
-        _textFormatter.Format(logEvent, t_stringWriter);
+        textFormatter.Format(logEvent, t_stringWriter);
 
         var stringBuilder = t_stringWriter.GetStringBuilder();
         if (stringBuilder.Length == 0) return;
 
-        _actionSinkOptions.RegisteredActionLogger?.Invoke(stringBuilder.ToString());
+        actionSinkOptions.RegisteredActionLogger?.Invoke(stringBuilder.ToString());
 
         stringBuilder.Clear();
 

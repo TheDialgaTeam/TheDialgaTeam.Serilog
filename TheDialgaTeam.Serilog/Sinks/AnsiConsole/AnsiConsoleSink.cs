@@ -26,26 +26,11 @@ using Serilog.Formatting;
 
 namespace TheDialgaTeam.Serilog.Sinks.AnsiConsole;
 
-public sealed class AnsiConsoleSink : ILogEventSink, IDisposable
+public sealed class AnsiConsoleSink(ITextFormatter textFormatter) : ILogEventSink
 {
-    private readonly ITextFormatter _textFormatter;
-
-    public AnsiConsoleSink(ITextFormatter textFormatter)
-    {
-        _textFormatter = textFormatter;
-    }
-
     public void Emit(LogEvent logEvent)
     {
         var output = logEvent.Level < LogEventLevel.Error ? Console.Out : Console.Error;
-        _textFormatter.Format(logEvent, output);
-    }
-
-    public void Dispose()
-    {
-        if (_textFormatter is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
+        textFormatter.Format(logEvent, output);
     }
 }

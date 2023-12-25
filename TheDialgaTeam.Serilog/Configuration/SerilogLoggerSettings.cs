@@ -29,41 +29,21 @@ using Serilog.Extensions.Logging;
 
 namespace TheDialgaTeam.Serilog.Configuration;
 
-internal sealed class SerilogLoggerSettings : ILoggerSettings, IDisposable
+internal sealed class SerilogLoggerSettings(IOptionsMonitor<LogLevelOptions> logLevelOptionsMonitor) : ILoggerSettings
 {
-    private LogLevelOptions _logLevelOptions;
-    private readonly IDisposable?[] _disposables;
-
-    public SerilogLoggerSettings(IOptionsMonitor<LogLevelOptions> logLevelOptions)
-    {
-        _logLevelOptions = logLevelOptions.CurrentValue;
-
-        _disposables = new[]
-        {
-            logLevelOptions.OnChange(options => _logLevelOptions = options)
-        };
-    }
-
     public void Configure(LoggerConfiguration loggerConfiguration)
     {
         loggerConfiguration.Filter.ByIncludingOnly(logEvent =>
         {
             string? sourceContext = null;
 
-            if (logEvent.Properties.TryGetValue(Constants.SourceContextPropertyName, out var logEventPropertyValue) && logEventPropertyValue is ScalarValue { Value: string sourceContextValue })
+            if (logEvent.Properties.TryGetValue(Constants.SourceContextPropertyName, out var logEventPropertyValue) && 
+                logEventPropertyValue is ScalarValue { Value: string sourceContextValue })
             {
                 sourceContext = sourceContextValue;
             }
 
-            return LevelConvert.ToExtensionsLevel(logEvent.Level) >= _logLevelOptions.GetMinimumLogLevel(sourceContext);
+            return LevelConvert.ToExtensionsLevel(logEvent.Level) >= logLevelOptionsMonitor.CurrentValue.GetMinimumLogLevel(sourceContext);
         });
-    }
-
-    public void Dispose()
-    {
-        foreach (var disposable in _disposables)
-        {
-            disposable?.Dispose();
-        }
     }
 }

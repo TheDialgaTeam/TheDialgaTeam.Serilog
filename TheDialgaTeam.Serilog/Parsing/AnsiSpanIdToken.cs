@@ -26,12 +26,8 @@ using TheDialgaTeam.Serilog.Events;
 
 namespace TheDialgaTeam.Serilog.Parsing;
 
-internal sealed class AnsiSpanIdToken : AnsiMessageTemplateToken<PropertyToken>
+internal sealed class AnsiSpanIdToken(PropertyToken propertyToken) : AnsiMessageTemplateToken<PropertyToken>(propertyToken)
 {
-    public AnsiSpanIdToken(PropertyToken propertyToken) : base(propertyToken)
-    {
-    }
-
     public override void Render(LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null)
     {
         Render(new Dictionary<string, LogEventPropertyValue>

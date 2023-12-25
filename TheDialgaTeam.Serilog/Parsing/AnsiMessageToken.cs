@@ -25,16 +25,10 @@ using Serilog.Parsing;
 
 namespace TheDialgaTeam.Serilog.Parsing;
 
-internal sealed class AnsiMessageToken : AnsiMessageTemplateToken<PropertyToken>
+internal sealed class AnsiMessageToken(PropertyToken propertyToken) : AnsiMessageTemplateToken<PropertyToken>(propertyToken)
 {
-    private readonly bool _isLiteral;
-    private readonly bool _isJson;
-
-    public AnsiMessageToken(PropertyToken propertyToken) : base(propertyToken)
-    {
-        _isLiteral = propertyToken.Format?.Contains('l') ?? false;
-        _isJson = propertyToken.Format?.Contains('j') ?? false;
-    }
+    private readonly bool _isLiteral = propertyToken.Format?.Contains('l') ?? false;
+    private readonly bool _isJson = propertyToken.Format?.Contains('j') ?? false;
 
     public override void Render(LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null)
     {

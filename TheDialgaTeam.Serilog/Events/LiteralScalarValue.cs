@@ -25,12 +25,8 @@ using Serilog.Events;
 
 namespace TheDialgaTeam.Serilog.Events;
 
-internal sealed class LiteralScalarValue : ScalarValue
+internal sealed class LiteralScalarValue(object? value) : ScalarValue(value)
 {
-    public LiteralScalarValue(object? value) : base(value)
-    {
-    }
-
     public override void Render(TextWriter output, string? format = null, IFormatProvider? formatProvider = null)
     {
         switch (Value)

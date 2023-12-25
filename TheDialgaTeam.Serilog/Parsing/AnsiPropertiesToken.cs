@@ -25,15 +25,9 @@ using Serilog.Parsing;
 
 namespace TheDialgaTeam.Serilog.Parsing;
 
-internal sealed class AnsiPropertiesToken : AnsiMessageTemplateToken<PropertyToken>
+internal sealed class AnsiPropertiesToken(PropertyToken propertyToken, MessageTemplate messageTemplate)
+    : AnsiMessageTemplateToken<PropertyToken>(propertyToken)
 {
-    private readonly MessageTemplate _messageTemplate;
-
-    public AnsiPropertiesToken(PropertyToken propertyToken, MessageTemplate messageTemplate) : base(propertyToken)
-    {
-        _messageTemplate = messageTemplate;
-    }
-
     private static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
     {
         var templateTokens = template.Tokens;
@@ -52,7 +46,7 @@ internal sealed class AnsiPropertiesToken : AnsiMessageTemplateToken<PropertyTok
     public override void Render(LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null)
     {
         var propertiesToInclude = logEvent.Properties
-            .Where(pair => !TemplateContainsPropertyName(logEvent.MessageTemplate, pair.Key) && !TemplateContainsPropertyName(_messageTemplate, pair.Key))
+            .Where(pair => !TemplateContainsPropertyName(logEvent.MessageTemplate, pair.Key) && !TemplateContainsPropertyName(messageTemplate, pair.Key))
             .Select(pair => new LogEventProperty(pair.Key, pair.Value));
 
         Render(new Dictionary<string, LogEventPropertyValue>

@@ -39,10 +39,10 @@ public sealed class AnsiMessageTemplateTextFormatterOptions : IDisposable
     {
         LogLevelMessageTemplateOptions = logLevelMessageTemplateOptions.CurrentValue;
 
-        _disposables = new[]
-        {
+        _disposables =
+        [
             logLevelMessageTemplateOptions.OnChange(options => LogLevelMessageTemplateOptions = options)
-        };
+        ];
     }
 
     public void Dispose()

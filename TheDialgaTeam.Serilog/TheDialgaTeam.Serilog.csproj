@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        
         <IsTrimmable>true</IsTrimmable>
 
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -12,7 +14,7 @@
         <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
 
         <PackageId>TheDialgaTeam.Serilog</PackageId>
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
         <Authors>Yong Jian Ming</Authors>
         <Company>TheDialgaTeam</Company>
         <Product>TheDialgaTeam.Serilog</Product>

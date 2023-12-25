@@ -24,9 +24,4 @@ using Serilog.Parsing;
 
 namespace TheDialgaTeam.Serilog.Parsing;
 
-internal sealed class AnsiTextToken : AnsiMessageTemplateToken<TextToken>
-{
-    public AnsiTextToken(TextToken textToken) : base(textToken)
-    {
-    }
-}
+internal sealed class AnsiTextToken(TextToken textToken) : AnsiMessageTemplateToken<TextToken>(textToken);

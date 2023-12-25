@@ -27,12 +27,8 @@ using TheDialgaTeam.Serilog.Rendering;
 
 namespace TheDialgaTeam.Serilog.Parsing;
 
-internal sealed class AnsiPropertyToken : AnsiMessageTemplateToken<PropertyToken>
+internal sealed class AnsiPropertyToken(PropertyToken propertyToken) : AnsiMessageTemplateToken<PropertyToken>(propertyToken)
 {
-    public AnsiPropertyToken(PropertyToken propertyToken) : base(propertyToken)
-    {
-    }
-
     public static void Render(PropertyToken propertyToken, LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null, bool isLiteral = false, bool isJson = false)
     {
         if (!logEvent.Properties.TryGetValue(propertyToken.PropertyName, out var propertyValue)) return;

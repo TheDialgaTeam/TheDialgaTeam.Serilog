@@ -50,16 +50,12 @@ public abstract class AnsiMessageTemplateToken : MessageTemplateToken
     }
 }
 
-public abstract class AnsiMessageTemplateToken<TMessageTemplateToken> : AnsiMessageTemplateToken where TMessageTemplateToken : MessageTemplateToken
+public abstract class AnsiMessageTemplateToken<TMessageTemplateToken>(TMessageTemplateToken messageTemplateToken) : AnsiMessageTemplateToken
+    where TMessageTemplateToken : MessageTemplateToken
 {
     public override int Length => MessageTemplateToken.Length;
 
-    protected readonly TMessageTemplateToken MessageTemplateToken;
-
-    protected AnsiMessageTemplateToken(TMessageTemplateToken messageTemplateToken)
-    {
-        MessageTemplateToken = messageTemplateToken;
-    }
+    protected readonly TMessageTemplateToken MessageTemplateToken = messageTemplateToken;
 
     public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {

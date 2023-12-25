@@ -28,18 +28,11 @@ using TheDialgaTeam.Serilog.Parsing;
 
 namespace TheDialgaTeam.Serilog.Formatting;
 
-public sealed class AnsiMessageTemplateTextFormatter : ITextFormatter
+public sealed class AnsiMessageTemplateTextFormatter(
+    AnsiMessageTemplateTextFormatterOptions options, 
+    IFormatProvider? formatProvider = null) : ITextFormatter
 {
-    private readonly AnsiMessageTemplateTextFormatterOptions _options;
-    private readonly IFormatProvider? _formatProvider;
-
     private readonly AnsiTemplateTextParser _ansiTemplateTextParser = new();
-
-    public AnsiMessageTemplateTextFormatter(AnsiMessageTemplateTextFormatterOptions options, IFormatProvider? formatProvider = null)
-    {
-        _options = options;
-        _formatProvider = formatProvider;
-    }
 
     public void Format(LogEvent logEvent, TextWriter output)
     {
@@ -50,13 +43,13 @@ public sealed class AnsiMessageTemplateTextFormatter : ITextFormatter
             sourceContext = sourceContextValue;
         }
 
-        var logLevelMessageTemplateOptions = _options.LogLevelMessageTemplateOptions;
+        var logLevelMessageTemplateOptions = options.LogLevelMessageTemplateOptions;
 
         var messageTemplate = logLevelMessageTemplateOptions.GetMessageTemplate(sourceContext, LevelConvert.ToExtensionsLevel(logEvent.Level));
 
         foreach (var messageTemplateToken in _ansiTemplateTextParser.GetMessageTemplateTokens(messageTemplate))
         {
-            messageTemplateToken.Render(logEvent, output, _formatProvider);
+            messageTemplateToken.Render(logEvent, output, formatProvider);
         }
     }
 }
