@@ -29,7 +29,7 @@ using TheDialgaTeam.Serilog.Parsing;
 namespace TheDialgaTeam.Serilog.Formatting;
 
 public sealed class AnsiMessageTemplateTextFormatter(
-    AnsiMessageTemplateTextFormatterOptions options, 
+    LogLevelMessageTemplateOptions options,
     IFormatProvider? formatProvider = null) : ITextFormatter
 {
     private readonly AnsiTemplateTextParser _ansiTemplateTextParser = new();
@@ -42,10 +42,8 @@ public sealed class AnsiMessageTemplateTextFormatter(
         {
             sourceContext = sourceContextValue;
         }
-
-        var logLevelMessageTemplateOptions = options.LogLevelMessageTemplateOptions;
-
-        var messageTemplate = logLevelMessageTemplateOptions.GetMessageTemplate(sourceContext, LevelConvert.ToExtensionsLevel(logEvent.Level));
+        
+        var messageTemplate = options.GetMessageTemplate(sourceContext, LevelConvert.ToExtensionsLevel(logEvent.Level));
 
         foreach (var messageTemplateToken in _ansiTemplateTextParser.GetMessageTemplateTokens(messageTemplate))
         {

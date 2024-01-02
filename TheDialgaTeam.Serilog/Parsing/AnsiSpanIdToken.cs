@@ -30,9 +30,8 @@ internal sealed class AnsiSpanIdToken(PropertyToken propertyToken) : AnsiMessage
 {
     public override void Render(LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null)
     {
-        Render(new Dictionary<string, LogEventPropertyValue>
-        {
-            { MessageTemplateToken.PropertyName, new LiteralScalarValue(logEvent.SpanId) }
-        }, output, formatProvider);
+        LogEventPropertyValues.Clear();
+        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName, new LiteralScalarValue(logEvent.SpanId));
+        Render(LogEventPropertyValues, output, formatProvider);
     }
 }

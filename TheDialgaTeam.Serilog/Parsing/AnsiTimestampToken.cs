@@ -30,9 +30,8 @@ internal sealed class AnsiTimestampToken(PropertyToken propertyToken) : AnsiMess
 {
     public override void Render(LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null)
     {
-        Render(new Dictionary<string, LogEventPropertyValue>
-        {
-            { MessageTemplateToken.PropertyName, new LiteralScalarValue(logEvent.Timestamp) }
-        }, output, formatProvider);
+        LogEventPropertyValues.Clear();
+        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName, new LiteralScalarValue(logEvent.Timestamp));
+        Render(LogEventPropertyValues, output, formatProvider);
     }
 }

@@ -21,10 +21,8 @@
 // SOFTWARE.
 
 using System.Runtime.InteropServices;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Configuration;
-using Serilog.Formatting;
 using TheDialgaTeam.Serilog.Formatting;
 using TheDialgaTeam.Serilog.Native;
 
@@ -32,16 +30,26 @@ namespace TheDialgaTeam.Serilog.Sinks.AnsiConsole;
 
 public static class AnsiConsoleSinkExtensions
 {
-    public static LoggerConfiguration AnsiConsoleSink(this LoggerSinkConfiguration sinkConfiguration, ITextFormatter textFormatter)
+    public static LoggerConfiguration AnsiConsoleSink(this LoggerSinkConfiguration sinkConfiguration, IFormatProvider? formatProvider = null)
     {
         SetAnsiConsole();
-        return sinkConfiguration.Async(configuration => configuration.Sink(new AnsiConsoleSink(textFormatter)));
+        return sinkConfiguration.Async(configuration => configuration.Sink(new AnsiConsoleSink(new LogLevelMessageTemplateOptions(), formatProvider)));
     }
-
-    public static LoggerConfiguration AnsiConsoleSink(this LoggerSinkConfiguration sinkConfiguration, IServiceProvider serviceProvider)
+    
+    public static LoggerConfiguration AnsiConsoleSink(this LoggerSinkConfiguration sinkConfiguration, LogLevelMessageTemplateOptions options, IFormatProvider? formatProvider = null)
     {
         SetAnsiConsole();
-        return sinkConfiguration.Async(configuration => configuration.Sink(new AnsiConsoleSink(ActivatorUtilities.CreateInstance<AnsiMessageTemplateTextFormatter>(serviceProvider))));
+        return sinkConfiguration.Async(configuration => configuration.Sink(new AnsiConsoleSink(options, formatProvider)));
+    }
+    
+    public static LoggerConfiguration AnsiConsoleSink(this LoggerSinkConfiguration sinkConfiguration, Action<LogLevelMessageTemplateOptionsBuilder> options, IFormatProvider? formatProvider = null)
+    {
+        SetAnsiConsole();
+
+        var optionsBuilder = new LogLevelMessageTemplateOptionsBuilder();
+        options(optionsBuilder);
+        
+        return sinkConfiguration.Async(configuration => configuration.Sink(new AnsiConsoleSink(optionsBuilder.Build(), formatProvider)));
     }
 
     private static void SetAnsiConsole()

@@ -49,9 +49,8 @@ internal sealed class AnsiPropertiesToken(PropertyToken propertyToken, MessageTe
             .Where(pair => !TemplateContainsPropertyName(logEvent.MessageTemplate, pair.Key) && !TemplateContainsPropertyName(messageTemplate, pair.Key))
             .Select(pair => new LogEventProperty(pair.Key, pair.Value));
 
-        Render(new Dictionary<string, LogEventPropertyValue>
-        {
-            { MessageTemplateToken.PropertyName, new StructureValue(propertiesToInclude) }
-        }, output, formatProvider);
+        LogEventPropertyValues.Clear();
+        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName, new StructureValue(propertiesToInclude));
+        Render(LogEventPropertyValues, output, formatProvider);
     }
 }

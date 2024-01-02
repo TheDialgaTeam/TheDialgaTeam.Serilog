@@ -32,11 +32,9 @@ internal sealed class AnsiExceptionToken(PropertyToken propertyToken) : AnsiMess
     {
         if (logEvent.Exception is null) return;
 
-        Render(new Dictionary<string, LogEventPropertyValue>
-        {
-            { MessageTemplateToken.PropertyName, new LiteralScalarValue(logEvent.Exception) }
-        }, output, formatProvider);
-
+        LogEventPropertyValues.Clear();
+        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(logEvent.Exception));
+        Render(LogEventPropertyValues, output, formatProvider);
         output.WriteLine();
     }
 }

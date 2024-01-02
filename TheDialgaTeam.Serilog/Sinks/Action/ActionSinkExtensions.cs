@@ -20,11 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Formatting;
-using TheDialgaTeam.Serilog.Formatting;
 
 namespace TheDialgaTeam.Serilog.Sinks.Action;
 
@@ -33,10 +31,5 @@ public static class ActionSinkExtensions
     public static LoggerConfiguration ActionSink(this LoggerSinkConfiguration sinkConfiguration, ITextFormatter textFormatter, ActionSinkOptions actionSinkOptions)
     {
         return sinkConfiguration.Async(configuration => configuration.Sink(new ActionSink(textFormatter, actionSinkOptions)));
-    }
-
-    public static LoggerConfiguration ActionSink(this LoggerSinkConfiguration sinkConfiguration, IServiceProvider serviceProvider)
-    {
-        return sinkConfiguration.Async(configuration => configuration.Sink(new ActionSink(ActivatorUtilities.CreateInstance<AnsiMessageTemplateTextFormatter>(serviceProvider), serviceProvider.GetRequiredService<ActionSinkOptions>())));
     }
 }

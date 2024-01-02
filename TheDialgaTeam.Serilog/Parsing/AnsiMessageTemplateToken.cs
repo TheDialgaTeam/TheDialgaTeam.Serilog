@@ -57,6 +57,8 @@ public abstract class AnsiMessageTemplateToken<TMessageTemplateToken>(TMessageTe
 
     protected readonly TMessageTemplateToken MessageTemplateToken = messageTemplateToken;
 
+    protected readonly Dictionary<string, LogEventPropertyValue> LogEventPropertyValues = new();
+
     public override void Render(IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output, IFormatProvider? formatProvider = null)
     {
         var stringWriter = ReusableStringWriter.GetOrCreate(formatProvider);

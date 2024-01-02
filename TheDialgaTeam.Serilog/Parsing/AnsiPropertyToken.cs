@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Text.Json;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 using Serilog.Parsing;
 using TheDialgaTeam.Serilog.Rendering;
 
@@ -39,7 +39,8 @@ internal sealed class AnsiPropertyToken(PropertyToken propertyToken) : AnsiMessa
         }
         else if (isJson && propertyToken.Format is null)
         {
-            RenderJson(output, propertyValue);
+            var jsonValueFormatter = new JsonValueFormatter();
+            jsonValueFormatter.Format(propertyValue, output);
         }
         else
         {
@@ -50,96 +51,6 @@ internal sealed class AnsiPropertyToken(PropertyToken propertyToken) : AnsiMessa
             if (stringBuilder.Length == 0) return;
 
             AnsiEscapeCodeTextRenderer.Render(output, stringWriter.ToString());
-        }
-    }
-
-    private static void RenderJson(TextWriter output, LogEventPropertyValue propertyValue)
-    {
-        switch (propertyValue)
-        {
-            case ScalarValue scalarValue:
-            {
-                output.Write(JsonSerializer.Serialize(scalarValue));
-                break;
-            }
-
-            case SequenceValue sequenceValue:
-            {
-                output.Write("[");
-
-                char? delim = null;
-
-                foreach (var element in sequenceValue.Elements)
-                {
-                    if (delim is not null)
-                    {
-                        output.Write(",");
-                    }
-
-                    delim = ',';
-                    RenderJson(output, element);
-                }
-
-                output.Write("]");
-                break;
-            }
-
-            case StructureValue structureValue:
-            {
-                output.Write("{");
-
-                char? delim = null;
-
-                foreach (var property in structureValue.Properties)
-                {
-                    if (delim is not null)
-                    {
-                        output.Write(",");
-                    }
-
-                    delim = ',';
-
-                    output.Write($"\"{property.Name}\"");
-                    output.Write(":");
-
-                    RenderJson(output, property.Value);
-                }
-
-                output.Write("}");
-                break;
-            }
-
-            case DictionaryValue dictionaryValue:
-            {
-                output.Write("{");
-
-                char? delim = null;
-
-                foreach (var element in dictionaryValue.Elements)
-                {
-                    if (delim is not null)
-                    {
-                        output.Write(",");
-                    }
-
-                    delim = ',';
-
-                    if (element.Key.Value is string key)
-                    {
-                        output.Write($"\"{key}\"");
-                    }
-                    else
-                    {
-                        output.Write($"\"{element.Key.Value?.ToString() ?? "null"}\"");
-                    }
-
-                    output.Write(":");
-                    RenderJson(output, element.Value);
-                }
-
-                output.Write("}");
-                break;
-            }
         }
     }
 }

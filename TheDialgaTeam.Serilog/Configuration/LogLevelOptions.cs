@@ -24,7 +24,7 @@ using Microsoft.Extensions.Logging;
 
 namespace TheDialgaTeam.Serilog.Configuration;
 
-internal sealed class LogLevelOptions
+public sealed class LogLevelOptions
 {
     public LogLevel Default { get; set; } = LogLevel.Information;
 

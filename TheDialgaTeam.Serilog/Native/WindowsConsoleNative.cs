@@ -21,9 +21,11 @@
 // SOFTWARE.
 
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace TheDialgaTeam.Serilog.Native;
 
+[SupportedOSPlatform("windows")]
 internal static partial class WindowsConsoleNative
 {
     public const int StandardOutputHandleId = -11;
@@ -31,14 +33,14 @@ internal static partial class WindowsConsoleNative
     public const int EnableVirtualTerminalProcessingMode = 4;
     public const int InvalidHandleValue = -1;
 
-    [LibraryImport("kernel32.dll")]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     public static partial IntPtr GetStdHandle(int handleId);
 
-    [LibraryImport("kernel32.dll")]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool GetConsoleMode(IntPtr handle, out int mode);
 
-    [LibraryImport("kernel32.dll")]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool SetConsoleMode(IntPtr handle, int mode);
 }

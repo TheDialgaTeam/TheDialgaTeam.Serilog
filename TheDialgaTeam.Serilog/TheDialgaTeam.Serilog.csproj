@@ -14,7 +14,7 @@
         <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
 
         <PackageId>TheDialgaTeam.Serilog</PackageId>
-        <Version>1.2.0</Version>
+        <Version>1.3.0</Version>
         <Authors>Yong Jian Ming</Authors>
         <Company>TheDialgaTeam</Company>
         <Product>TheDialgaTeam.Serilog</Product>

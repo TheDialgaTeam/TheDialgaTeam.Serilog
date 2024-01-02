@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using TheDialgaTeam.Serilog.Formatting;
 using TheDialgaTeam.Serilog.Native;
@@ -45,18 +46,32 @@ internal static partial class AnsiEscapeCodeTextRenderer
     {
         if (!IsAnsiEscapeCodeSupported.TryGetValue(output, out var isSupported))
         {
-            if (output == Console.Out)
+            if (output == Console.Out && !Console.IsOutputRedirected)
             {
-                if (WindowsConsoleNative.GetConsoleMode(WindowsConsoleNative.StandardOutputHandleId, out var mode))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    isSupported = (mode & WindowsConsoleNative.EnableVirtualTerminalProcessingMode) == WindowsConsoleNative.EnableVirtualTerminalProcessingMode;
+                    if (WindowsConsoleNative.GetConsoleMode(WindowsConsoleNative.StandardOutputHandleId, out var mode))
+                    {
+                        isSupported = (mode & WindowsConsoleNative.EnableVirtualTerminalProcessingMode) == WindowsConsoleNative.EnableVirtualTerminalProcessingMode;
+                    }
+                }
+                else
+                {
+                    isSupported = true;
                 }
             }
-            else if (output == Console.Error)
+            else if (output == Console.Error && !Console.IsErrorRedirected)
             {
-                if (WindowsConsoleNative.GetConsoleMode(WindowsConsoleNative.StandardErrorHandleId, out var mode))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    isSupported = (mode & WindowsConsoleNative.EnableVirtualTerminalProcessingMode) == WindowsConsoleNative.EnableVirtualTerminalProcessingMode;
+                    if (WindowsConsoleNative.GetConsoleMode(WindowsConsoleNative.StandardErrorHandleId, out var mode))
+                    {
+                        isSupported = (mode & WindowsConsoleNative.EnableVirtualTerminalProcessingMode) == WindowsConsoleNative.EnableVirtualTerminalProcessingMode;
+                    }
+                }
+                else
+                {
+                    isSupported = true;
                 }
             }
             else
@@ -92,7 +107,7 @@ internal static partial class AnsiEscapeCodeTextRenderer
                     output.Write(currentText.Slice(currentIndex, ansiToken.Index));
                 }
 
-                if (output == Console.Out || output == Console.Error)
+                if ((output == Console.Out && !Console.IsOutputRedirected) || (output == Console.Error && !Console.IsErrorRedirected))
                 {
                     switch (ansiToken.Value)
                     {

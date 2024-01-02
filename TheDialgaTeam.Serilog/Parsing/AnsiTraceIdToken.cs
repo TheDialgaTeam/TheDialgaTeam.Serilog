@@ -30,9 +30,8 @@ internal sealed class AnsiTraceIdToken(PropertyToken propertyToken) : AnsiMessag
 {
     public override void Render(LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null)
     {
-        Render(new Dictionary<string, LogEventPropertyValue>
-        {
-            { MessageTemplateToken.PropertyName, new LiteralScalarValue(logEvent.TraceId) }
-        }, output, formatProvider);
+        LogEventPropertyValues.Clear();
+        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName, new LiteralScalarValue(logEvent.TraceId));
+        Render(LogEventPropertyValues, output, formatProvider);
     }
 }

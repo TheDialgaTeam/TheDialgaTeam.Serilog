@@ -64,10 +64,9 @@ internal sealed class AnsiLevelToken(PropertyToken propertyToken) : AnsiMessageT
 
         if (formatStringSpan.Length < 2)
         {
-            Render(new Dictionary<string, LogEventPropertyValue>
-            {
-                { MessageTemplateToken.PropertyName, new LiteralScalarValue(Enum.GetName(logEvent.Level)) }
-            }, output, formatProvider);
+            LogEventPropertyValues.Clear();
+            LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(Enum.GetName(logEvent.Level)));
+            Render(LogEventPropertyValues, output, formatProvider);
             return;
         }
 
@@ -83,17 +82,15 @@ internal sealed class AnsiLevelToken(PropertyToken propertyToken) : AnsiMessageT
                     {
                         var result = (Enum.GetName(logEvent.Level) ?? string.Empty).ToLowerInvariant();
 
-                        Render(new Dictionary<string, LogEventPropertyValue>
-                        {
-                            { MessageTemplateToken.PropertyName, new LiteralScalarValue(result.Length >= formatLength ? result : result[..formatLength]) }
-                        }, output, formatProvider);
+                        LogEventPropertyValues.Clear();
+                        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(result.Length >= formatLength ? result : result[..formatLength]));
+                        Render(LogEventPropertyValues, output, formatProvider);
                     }
                     else
                     {
-                        Render(new Dictionary<string, LogEventPropertyValue>
-                        {
-                            { MessageTemplateToken.PropertyName, new LiteralScalarValue(LowercaseLevelMap[(int) logEvent.Level][formatLength - 1]) }
-                        }, output, formatProvider);
+                        LogEventPropertyValues.Clear();
+                        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(LowercaseLevelMap[(int) logEvent.Level][formatLength - 1]));
+                        Render(LogEventPropertyValues, output, formatProvider);
                     }
 
                     break;
@@ -105,17 +102,15 @@ internal sealed class AnsiLevelToken(PropertyToken propertyToken) : AnsiMessageT
                     {
                         var result = (Enum.GetName(logEvent.Level) ?? string.Empty).ToUpperInvariant();
 
-                        Render(new Dictionary<string, LogEventPropertyValue>
-                        {
-                            { MessageTemplateToken.PropertyName, new LiteralScalarValue(result.Length >= formatLength ? result : result[..formatLength]) }
-                        }, output, formatProvider);
+                        LogEventPropertyValues.Clear();
+                        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(result.Length >= formatLength ? result : result[..formatLength]));
+                        Render(LogEventPropertyValues, output, formatProvider);
                     }
                     else
                     {
-                        Render(new Dictionary<string, LogEventPropertyValue>
-                        {
-                            { MessageTemplateToken.PropertyName, new LiteralScalarValue(UppercaseLevelMap[(int) logEvent.Level][formatLength - 1]) }
-                        }, output, formatProvider);
+                        LogEventPropertyValues.Clear();
+                        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(UppercaseLevelMap[(int) logEvent.Level][formatLength - 1]));
+                        Render(LogEventPropertyValues, output, formatProvider);
                     }
 
                     break;
@@ -127,17 +122,15 @@ internal sealed class AnsiLevelToken(PropertyToken propertyToken) : AnsiMessageT
                     {
                         var result = Enum.GetName(logEvent.Level) ?? string.Empty;
 
-                        Render(new Dictionary<string, LogEventPropertyValue>
-                        {
-                            { MessageTemplateToken.PropertyName, new LiteralScalarValue(result.Length >= formatLength ? result : result[..formatLength]) }
-                        }, output, formatProvider);
+                        LogEventPropertyValues.Clear();
+                        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(result.Length >= formatLength ? result : result[..formatLength]));
+                        Render(LogEventPropertyValues, output, formatProvider);
                     }
                     else
                     {
-                        Render(new Dictionary<string, LogEventPropertyValue>
-                        {
-                            { MessageTemplateToken.PropertyName, new LiteralScalarValue(TitleCaseLevelMap[(int) logEvent.Level][formatLength - 1]) }
-                        }, output, formatProvider);
+                        LogEventPropertyValues.Clear();
+                        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(TitleCaseLevelMap[(int) logEvent.Level][formatLength - 1]));
+                        Render(LogEventPropertyValues, output, formatProvider);
                     }
 
                     break;
@@ -145,20 +138,18 @@ internal sealed class AnsiLevelToken(PropertyToken propertyToken) : AnsiMessageT
 
                 default:
                 {
-                    Render(new Dictionary<string, LogEventPropertyValue>
-                    {
-                        { MessageTemplateToken.PropertyName, new LiteralScalarValue(Enum.GetName(logEvent.Level)) }
-                    }, output, formatProvider);
+                    LogEventPropertyValues.Clear();
+                    LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(Enum.GetName(logEvent.Level)));
+                    Render(LogEventPropertyValues, output, formatProvider);
                     break;
                 }
             }
         }
         else
         {
-            Render(new Dictionary<string, LogEventPropertyValue>
-            {
-                { MessageTemplateToken.PropertyName, new LiteralScalarValue(Enum.GetName(logEvent.Level)) }
-            }, output, formatProvider);
+            LogEventPropertyValues.Clear();
+            LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(Enum.GetName(logEvent.Level)));
+            Render(LogEventPropertyValues, output, formatProvider);
         }
     }
 }

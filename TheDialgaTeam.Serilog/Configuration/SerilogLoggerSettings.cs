@@ -24,26 +24,47 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
-using Serilog.Events;
 using Serilog.Extensions.Logging;
 
 namespace TheDialgaTeam.Serilog.Configuration;
 
-internal sealed class SerilogLoggerSettings(IOptionsMonitor<LogLevelOptions> logLevelOptionsMonitor) : ILoggerSettings
+internal sealed class SerilogLoggerSettings(IOptionsMonitor<LogLevelOptions> logLevelOptionsMonitor) : ILoggerSettings, IDisposable
 {
+    private readonly LoggingLevelSwitch _defaultLoggingLevelSwitch = new();
+    private readonly Dictionary<string, LoggingLevelSwitch> _overridesLoggingLevelSwitch = new();
+    
+    private IDisposable? _disposable;
+    
     public void Configure(LoggerConfiguration loggerConfiguration)
     {
-        loggerConfiguration.Filter.ByIncludingOnly(logEvent =>
+        UpdateLogLevel(logLevelOptionsMonitor.CurrentValue);
+        loggerConfiguration.MinimumLevel.ControlledBy(_defaultLoggingLevelSwitch);
+        
+        foreach (var (sourceContext, logLevel) in logLevelOptionsMonitor.CurrentValue.Overrides)
         {
-            string? sourceContext = null;
+            var temp = new LoggingLevelSwitch(LevelConvert.ToSerilogLevel(logLevel));
+            _overridesLoggingLevelSwitch.Add(sourceContext, temp);
+            loggerConfiguration.MinimumLevel.Override(sourceContext, temp);
+        }
+        
+        _disposable = logLevelOptionsMonitor.OnChange(UpdateLogLevel);
+    }
 
-            if (logEvent.Properties.TryGetValue(Constants.SourceContextPropertyName, out var logEventPropertyValue) && 
-                logEventPropertyValue is ScalarValue { Value: string sourceContextValue })
+    private void UpdateLogLevel(LogLevelOptions options)
+    {
+        _defaultLoggingLevelSwitch.MinimumLevel = LevelConvert.ToSerilogLevel(options.Default);
+
+        foreach (var (sourceContext, logLevel) in options.Overrides)
+        {
+            if (_overridesLoggingLevelSwitch.TryGetValue(sourceContext, out var levelSwitch))
             {
-                sourceContext = sourceContextValue;
+                levelSwitch.MinimumLevel = LevelConvert.ToSerilogLevel(logLevel);
             }
+        }
+    }
 
-            return LevelConvert.ToExtensionsLevel(logEvent.Level) >= logLevelOptionsMonitor.CurrentValue.GetMinimumLogLevel(sourceContext);
-        });
+    public void Dispose()
+    {
+        _disposable?.Dispose();
     }
 }

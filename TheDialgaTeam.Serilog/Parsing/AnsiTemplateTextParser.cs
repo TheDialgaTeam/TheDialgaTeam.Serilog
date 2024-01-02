@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Concurrent;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
 
@@ -29,11 +28,17 @@ namespace TheDialgaTeam.Serilog.Parsing;
 internal sealed class AnsiTemplateTextParser
 {
     private readonly MessageTemplateParser _messageTemplateParser = new();
-    private readonly ConcurrentDictionary<string, AnsiMessageTemplateToken[]> _textFormatters = new();
+    private readonly Dictionary<string, AnsiMessageTemplateToken[]> _textFormatters = new();
 
-    public AnsiMessageTemplateToken[] GetMessageTemplateTokens(string messageTemplateFormat)
+    public IEnumerable<AnsiMessageTemplateToken> GetMessageTemplateTokens(string messageTemplateFormat)
     {
-        return _textFormatters.GetOrAdd(messageTemplateFormat, static (key, args) => args.GenerateMessageTemplateTokens(key).ToArray(), this);
+        if (!_textFormatters.TryGetValue(messageTemplateFormat, out var result))
+        {
+            result = GenerateMessageTemplateTokens(messageTemplateFormat).ToArray();
+            _textFormatters.Add(messageTemplateFormat, result);
+        }
+
+        return result;
     }
 
     private IEnumerable<AnsiMessageTemplateToken> GenerateMessageTemplateTokens(string messageTemplateFormat)

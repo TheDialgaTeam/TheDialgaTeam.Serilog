@@ -30,9 +30,8 @@ internal sealed class AnsiNewLineToken(PropertyToken propertyToken) : AnsiMessag
 {
     public override void Render(LogEvent logEvent, TextWriter output, IFormatProvider? formatProvider = null)
     {
-        Render(new Dictionary<string, LogEventPropertyValue>
-        {
-            { MessageTemplateToken.PropertyName, new LiteralScalarValue(Environment.NewLine) }
-        }, output, formatProvider);
+        LogEventPropertyValues.Clear();
+        LogEventPropertyValues.Add(MessageTemplateToken.PropertyName,  new LiteralScalarValue(Environment.NewLine));
+        Render(LogEventPropertyValues, output, formatProvider);
     }
 }

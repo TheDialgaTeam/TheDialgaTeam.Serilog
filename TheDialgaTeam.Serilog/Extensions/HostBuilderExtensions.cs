@@ -25,9 +25,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using TheDialgaTeam.Serilog.Configuration;
-using TheDialgaTeam.Serilog.Formatting;
-using TheDialgaTeam.Serilog.Formatting.Options;
-using TheDialgaTeam.Serilog.Sinks.Action;
 
 namespace TheDialgaTeam.Serilog.Extensions;
 
@@ -38,9 +35,19 @@ public static class HostBuilderExtensions
         return hostBuilder.ConfigureServices(static collection =>
         {
             collection.AddOptions<LogLevelOptions>().BindConfiguration("TheDialgaTeam.Serilog:LogLevel");
-            collection.AddOptions<LogLevelMessageTemplateOptions>().BindConfiguration("TheDialgaTeam.Serilog:LogLevelMessageTemplate");
-            collection.TryAddSingleton<AnsiMessageTemplateTextFormatterOptions>();
-            collection.TryAddSingleton<ActionSinkOptions>();
+            collection.TryAddSingleton<SerilogLoggerSettings>();
+        }).UseSerilog((context, provider, configuration) =>
+        {
+            configuration.ReadFrom.Settings(provider.GetRequiredService<SerilogLoggerSettings>());
+            configureLogger(context, provider, configuration);
+        });
+    }
+    
+    public static IHostBuilder ConfigureSerilog(this IHostBuilder hostBuilder, string logLevelConfigSection, Action<HostBuilderContext, IServiceProvider, LoggerConfiguration> configureLogger)
+    {
+        return hostBuilder.ConfigureServices(collection =>
+        {
+            collection.AddOptions<LogLevelOptions>().BindConfiguration(logLevelConfigSection);
             collection.TryAddSingleton<SerilogLoggerSettings>();
         }).UseSerilog((context, provider, configuration) =>
         {

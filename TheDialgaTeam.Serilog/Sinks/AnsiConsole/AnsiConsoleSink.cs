@@ -22,15 +22,33 @@
 
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting;
+using TheDialgaTeam.Serilog.Formatting;
 
 namespace TheDialgaTeam.Serilog.Sinks.AnsiConsole;
 
-public sealed class AnsiConsoleSink(ITextFormatter textFormatter) : ILogEventSink
+public sealed class AnsiConsoleSink : ILogEventSink
 {
+    private readonly AnsiMessageTemplateTextFormatter _textFormatter;
+    private readonly object _syncLock = new();
+
+    public AnsiConsoleSink(AnsiMessageTemplateTextFormatter textFormatter)
+    {
+        _textFormatter = textFormatter;
+    }
+    
+    public AnsiConsoleSink(LogLevelMessageTemplateOptions options, IFormatProvider? formatProvider = null)
+    {
+        _textFormatter = new AnsiMessageTemplateTextFormatter(options, formatProvider);
+    }
+    
     public void Emit(LogEvent logEvent)
     {
         var output = logEvent.Level < LogEventLevel.Error ? Console.Out : Console.Error;
-        textFormatter.Format(logEvent, output);
+
+        lock (_syncLock)
+        {
+            _textFormatter.Format(logEvent, output);
+            output.Flush();
+        }
     }
 }

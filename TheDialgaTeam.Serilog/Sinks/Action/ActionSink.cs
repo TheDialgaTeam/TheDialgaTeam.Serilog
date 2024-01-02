@@ -30,23 +30,28 @@ public sealed class ActionSink(ITextFormatter textFormatter, ActionSinkOptions a
 {
     [ThreadStatic]
     private static StringWriter? t_stringWriter;
+    
+    private readonly object _syncLock = new();
 
     public void Emit(LogEvent logEvent)
     {
-        t_stringWriter ??= new StringWriter();
-
-        textFormatter.Format(logEvent, t_stringWriter);
-
-        var stringBuilder = t_stringWriter.GetStringBuilder();
-        if (stringBuilder.Length == 0) return;
-
-        actionSinkOptions.RegisteredActionLogger?.Invoke(stringBuilder.ToString());
-
-        stringBuilder.Clear();
-
-        if (stringBuilder.Capacity > 1024)
+        lock (_syncLock)
         {
-            stringBuilder.Capacity = 1024;
+            t_stringWriter ??= new StringWriter();
+            
+            textFormatter.Format(logEvent, t_stringWriter);
+
+            var stringBuilder = t_stringWriter.GetStringBuilder();
+            if (stringBuilder.Length == 0) return;
+
+            actionSinkOptions.RegisteredActionLogger?.Invoke(stringBuilder.ToString());
+
+            stringBuilder.Clear();
+
+            if (stringBuilder.Capacity > 1024)
+            {
+                stringBuilder.Capacity = 1024;
+            }
         }
     }
 }
