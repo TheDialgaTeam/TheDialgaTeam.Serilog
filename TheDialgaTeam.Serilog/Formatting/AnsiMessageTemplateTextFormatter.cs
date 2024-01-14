@@ -38,7 +38,7 @@ public sealed class AnsiMessageTemplateTextFormatter(
     {
         string? sourceContext = null;
 
-        if (!logEvent.Properties.TryGetValue(Constants.SourceContextPropertyName, out var sourceContextPropertyValue) && sourceContextPropertyValue is ScalarValue { Value: string sourceContextValue })
+        if (logEvent.Properties.TryGetValue(Constants.SourceContextPropertyName, out var sourceContextPropertyValue) && sourceContextPropertyValue is ScalarValue { Value: string sourceContextValue })
         {
             sourceContext = sourceContextValue;
         }

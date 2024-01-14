@@ -104,7 +104,7 @@ internal static partial class AnsiEscapeCodeTextRenderer
             {
                 if (currentIndex < ansiToken.Index)
                 {
-                    output.Write(currentText.Slice(currentIndex, ansiToken.Index - currentIndex));
+                    output.Write(currentText[currentIndex..ansiToken.Index]);
                 }
 
                 if ((output == Console.Out && !Console.IsOutputRedirected) || (output == Console.Error && !Console.IsErrorRedirected))
