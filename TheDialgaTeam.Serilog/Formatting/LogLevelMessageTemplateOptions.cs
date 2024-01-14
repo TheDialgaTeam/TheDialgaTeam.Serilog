@@ -120,7 +120,7 @@ public sealed class LogLevelMessageTemplateOptionsBuilder
         return this;
     }
 
-    public LogLevelMessageTemplateOptions Build()
+    internal LogLevelMessageTemplateOptions Build()
     {
         return _options;
     }
@@ -189,7 +189,7 @@ public sealed class LogLevelMessageTemplateBuilder
         return this;
     }
 
-    public LogLevelMessageTemplate Build()
+    internal LogLevelMessageTemplate Build()
     {
         return _template;
     }
